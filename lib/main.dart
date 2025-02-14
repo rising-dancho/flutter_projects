@@ -17,6 +17,17 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Hello, ninjas!!!!");
+    return Container(
+      color: Colors.orange[700],
+      padding: EdgeInsets.all(20),
+      margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
+      child: const Text("hello, ninjas",
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              letterSpacing: 4,
+              decoration: TextDecoration.underline,
+              fontStyle: FontStyle.italic)),
+    );
   }
 }
