@@ -8,15 +8,15 @@ void main() {
       backgroundColor: Colors.brown[700],
       centerTitle: true,
     ),
-    body: const Text("Hello, ninjas!!")
+    body: const Home(),
   )));
 }
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class Home extends StatelessWidget {
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Text("Hello, ninjas!!!!");
   }
 }
