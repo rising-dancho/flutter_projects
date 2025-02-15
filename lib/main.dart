@@ -1,33 +1,47 @@
+// import 'package:coffee_card/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(
-      home: Scaffold(
-    appBar: AppBar(
-      title: const Text("Coffee App"),
-      backgroundColor: Colors.brown[700],
-      centerTitle: true,
-    ),
-    body: const Home(),
-  )));
+  runApp(const MaterialApp(
+    home: Sandbox(),
+  ));
 }
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class Sandbox extends StatelessWidget {
+  const Sandbox({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.orange[700],
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
-      child: const Text("hello, ninjas",
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.brown[700],
+        title: Text(
+          "Coffee App",
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              letterSpacing: 4,
-              decoration: TextDecoration.underline,
-              fontStyle: FontStyle.italic)),
+            fontSize: 24,
+            wordSpacing: 8,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            color: Colors.orange[700],
+            padding: EdgeInsets.all(20),
+            child: Text("Wassap"),
+          ),
+          Container(
+            color: Colors.orange[500],
+            padding: EdgeInsets.all(20),
+            child: Text("Wassap"),
+          )
+        ],
+      ),
     );
   }
 }
