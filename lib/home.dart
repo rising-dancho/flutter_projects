@@ -1,3 +1,4 @@
+import 'package:coffee_card/shared/styled_body_text.dart';
 import 'package:coffee_card/widgets/coffee_prefs.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "My Coffee Id",
+          "My Coffee",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -24,7 +25,7 @@ class Home extends StatelessWidget {
           Container(
             color: Colors.brown[200],
             padding: EdgeInsets.all(20),
-            child: Text("How I like my coffee..."),
+            child: StyledBodyText("How I like my coffee..."),
           ),
           Container(
             color: Colors.brown[100],

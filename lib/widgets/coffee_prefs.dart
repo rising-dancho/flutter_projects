@@ -1,3 +1,4 @@
+import 'package:coffee_card/shared/styled_body_text.dart';
 import 'package:flutter/material.dart';
 
 class CoffeePrefs extends StatefulWidget {
@@ -29,7 +30,7 @@ class _CoffeePrefsState extends State<CoffeePrefs> {
       children: [
         Row(
           children: [
-            const Text("coffee: "),
+            const StyledBodyText("Coffee: "),
             Text("($coffee)"),
             const SizedBox(
               width: 10,
@@ -53,13 +54,13 @@ class _CoffeePrefsState extends State<CoffeePrefs> {
         ),
         Row(
           children: [
-            const Text("Sugar: "),
+            const StyledBodyText("Sugar: "),
             Text("($sugar)"),
             const SizedBox(
               width: 10,
             ),
             // IF sugar count equals zero (0) than displa text
-            if (sugar == 0) const Text("(No Sugar...)"),
+            if (sugar == 0) const StyledBodyText("( No Sugar . . . )"),
 
             // KEEP ADDING image assets equal to sugars variable's current count
             for (int i = 0; i < sugar; i++)
