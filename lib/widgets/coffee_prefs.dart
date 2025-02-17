@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 
-class CoffeePrefs extends StatelessWidget {
+class CoffeePrefs extends StatefulWidget {
   const CoffeePrefs({super.key});
 
-  void increaseStrByOne() {
-    print("increased strength by 1");
+  @override
+  State<CoffeePrefs> createState() => _CoffeePrefsState();
+}
+
+class _CoffeePrefsState extends State<CoffeePrefs> {
+  int coffee = 1;
+  int sugar = 1;
+
+  void increaseCaffeineShotByOne() {
+    setState(() {
+      coffee = coffee < 5 ? coffee + 1 : 1;
+    });
   }
 
-  void decreaseStrByOne() {
-    print("decrease strength by 1");
+  void increaseSugarByOne() {
+    setState(() {
+      sugar = sugar < 5 ? sugar + 1 : 0;
+    });
   }
 
   @override
@@ -17,45 +29,52 @@ class CoffeePrefs extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text("Strength: "),
-            const Text("3"),
+            const Text("coffee: "),
+            Text("($coffee)"),
             const SizedBox(
               width: 10,
             ),
-            Image.asset(
-              "assets/img/coffee_bean.png",
-              width: 25,
-              color: Colors.brown[100],
-              colorBlendMode: BlendMode.multiply,
-            ),
+            // KEEP ADDING image assets equal to coffee shots variable's current count
+            for (int i = 0; i < coffee; i++)
+              Image.asset(
+                "assets/img/coffee_bean.png",
+                width: 25,
+                color: Colors.brown[100],
+                colorBlendMode: BlendMode.multiply,
+              ),
             const Expanded(child: SizedBox()),
             FilledButton(
                 style: FilledButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.brown[700]),
-                onPressed: decreaseStrByOne,
+                onPressed: increaseCaffeineShotByOne,
                 child: const Text('+')),
           ],
         ),
         Row(
           children: [
             const Text("Sugar: "),
-            const Text("3"),
+            Text("($sugar)"),
             const SizedBox(
               width: 10,
             ),
-            Image.asset(
-              "assets/img/sugar_cube.png",
-              width: 25,
-              color: Colors.brown[100],
-              colorBlendMode: BlendMode.multiply,
-            ),
+            // IF sugar count equals zero (0) than displa text
+            if (sugar == 0) const Text("(No Sugar...)"),
+
+            // KEEP ADDING image assets equal to sugars variable's current count
+            for (int i = 0; i < sugar; i++)
+              Image.asset(
+                "assets/img/sugar_cube.png",
+                width: 25,
+                color: Colors.brown[100],
+                colorBlendMode: BlendMode.multiply,
+              ),
             const Expanded(child: SizedBox()),
             FilledButton(
                 style: FilledButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.brown[700]),
-                onPressed: decreaseStrByOne,
+                onPressed: increaseSugarByOne,
                 child: const Text('+')),
           ],
         ),

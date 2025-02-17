@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false, // Removes the "Demo" banner
     home: Home(),
   ));
 }
