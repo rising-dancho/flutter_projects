@@ -16,3 +16,5 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 # 1.) coffee_card
+![image](https://github.com/user-attachments/assets/ad23d426-af3c-4049-9d2b-faf49b8ed8af)
+
