@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rpg/shared/styled_button.dart';
 import 'package:flutter_rpg/shared/styled_text.dart';
 
 class Home extends StatefulWidget {
@@ -13,16 +14,17 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your Characters"),
+        title: StyledTitle("Your Characters"),
         centerTitle: true,
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            StyledText("Character list"),
-            StyledHeading("Character List"),
-            StyledTitle("Character list"),
+            const StyledText("Character list"),
+            const StyledHeading("Character List"),
+            const StyledTitle("Character list"),
+            StyledButton(onPressed: () {}, child: StyledHeading("Create New"))
           ],
         ),
       ),
