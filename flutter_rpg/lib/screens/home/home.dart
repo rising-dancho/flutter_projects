@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rpg/shared/styled_text.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,12 +14,17 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Characters"),
-        backgroundColor: Colors.grey,
         centerTitle: true,
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
-        child: Text("some texts"),
+        child: Column(
+          children: [
+            StyledText("Character list"),
+            StyledHeading("Character List"),
+            StyledTitle("Character list"),
+          ],
+        ),
       ),
     );
   }
