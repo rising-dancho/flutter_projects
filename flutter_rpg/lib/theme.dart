@@ -27,7 +27,6 @@ ThemeData primaryTheme = ThemeData(
     surfaceTintColor: Colors.transparent,
     centerTitle: true,
   ),
-
   textTheme: TextTheme(
     bodyMedium:
         TextStyle(color: AppColors.textColor, fontSize: 16, letterSpacing: 1),
@@ -42,6 +41,13 @@ ThemeData primaryTheme = ThemeData(
         fontWeight: FontWeight.bold,
         letterSpacing: 2),
   ),
+
+  // card theme
+  cardTheme: CardTheme(
+    color: AppColors.secondaryColor.withAlpha((0.5 * 255).toInt()),
+    surfaceTintColor: Colors.transparent,
+    shape: RoundedRectangleBorder(),
+    shadowColor: Colors.transparent,
+    margin: EdgeInsets.only(bottom: 16),
+  ),
 );
-
-
