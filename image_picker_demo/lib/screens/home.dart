@@ -23,8 +23,13 @@ class _HomeState extends State<Home> {
     imagePicker = ImagePicker();
   }
 
-  chooseImage() {
-    print("button clicked!");
+  chooseImage() async {
+    XFile? selectedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+    if (selectedImage != null) {
+      image = File(selectedImage.path);
+      setState(() => image);
+    }
   }
 
   @override
