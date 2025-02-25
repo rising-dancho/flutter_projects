@@ -12,7 +12,7 @@ class Character with Stats {
 
   // getter: [syntax: get getter_variable => _private_variable] 
   // explanation: asigning the private_variable into the getter_variable
-  get isFav => _isFav;
+  bool get isFav => _isFav;
 
   void toggleIsFav() {
     _isFav = !_isFav;

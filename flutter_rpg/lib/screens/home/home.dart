@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rpg/models/character.dart';
 import 'package:flutter_rpg/screens/home/character_card.dart';
 import 'package:flutter_rpg/shared/styled_button.dart';
 import 'package:flutter_rpg/shared/styled_text.dart';
@@ -15,6 +16,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    Character char = Character(name: "bitlog", slogan: "magtikol", id: "1");
+    String isFav = char.isFav.toString();
+    String name = char.name;
+    String slogan = char.slogan;
+    String id = char.id;
+
     return Scaffold(
         appBar: AppBar(
           title: StyledTitle("Your Characters"),
@@ -35,7 +42,8 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 StyledButton(
-                    onPressed: () {}, child: StyledHeading("Create New"))
+                    onPressed: () {}, child: StyledHeading("Create New")),
+                Text("$isFav $name $slogan $id")
               ],
             ),
           ),
