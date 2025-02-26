@@ -19,6 +19,9 @@ class PhotoEditorScreen extends StatelessWidget {
                   imageProvider: FileImage(imageFile),
                   minScale: PhotoViewComputedScale.contained * 0.8,
                   maxScale: PhotoViewComputedScale.covered * 2.0,
+                  backgroundDecoration: BoxDecoration(color: Colors.white),
+                  loadingBuilder: (context, event) =>
+                      CircularProgressIndicator(),
                 ),
               ),
               Positioned(
