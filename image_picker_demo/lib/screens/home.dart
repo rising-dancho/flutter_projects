@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_demo/screens/photo_editor_screen.dart';
+import 'package:photo_view/photo_view.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.title});
@@ -41,17 +41,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void openPhotoEditor() {
-    if (image != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PhotoEditorScreen(imageFile: image!),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,22 +53,28 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 30),
+                // Show PhotoView directly when an image is selected
                 image == null
                     ? const Icon(Icons.image_search, size: 125)
                     : Expanded(
-                        child: GestureDetector(
-                        onTap: openPhotoEditor, // Tap to open zoom mode
-                        child: Image.file(image!, height: 200),
-                      )),
+                        child: PhotoView(
+                          imageProvider: FileImage(image!),
+                          minScale: PhotoViewComputedScale.contained * 0.8,
+                          maxScale: PhotoViewComputedScale.covered * 2.0,
+                          backgroundDecoration:
+                              const BoxDecoration(color: Colors.white),
+                          loadingBuilder: (context, event) =>
+                              const CircularProgressIndicator(),
+                        ),
+                      ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: chooseImage,
                   onLongPress: captureImages,
                   child: const Text("Choose/Capture"),
                 ),
-                SizedBox(
-                  height: 30,
-                )
+                const SizedBox(height: 30),
               ],
             ),
           ),
