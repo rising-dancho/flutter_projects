@@ -19,7 +19,7 @@ samples, guidance on mobile development, and a full API reference.
 ![image](https://github.com/user-attachments/assets/ad23d426-af3c-4049-9d2b-faf49b8ed8af)
 
 # 2.) flutter_rpg
-![image](https://github.com/user-attachments/assets/5e490771-9bb8-4e4c-9399-d90ef8f61958)
+![image](https://github.com/user-attachments/assets/732548a9-1480-4335-8808-cf42742e55f8)
 
 # 3.) image_picker_demo
 ![image](https://github.com/user-attachments/assets/36e46ce7-420b-4c78-be77-73d2eb0bab30)
