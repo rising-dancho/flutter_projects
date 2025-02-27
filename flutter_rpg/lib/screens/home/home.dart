@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rpg/models/character.dart';
 import 'package:flutter_rpg/screens/home/character_card.dart';
 import 'package:flutter_rpg/shared/styled_button.dart';
 import 'package:flutter_rpg/shared/styled_text.dart';
@@ -11,10 +12,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List characters = ["mario", "luigi", "peach", "toad", "bowser", "koopa"];
+  // List characters = ["mario", "luigi", "peach", "toad", "bowser", "koopa"];
 
   @override
   Widget build(BuildContext context) {
+    // Vocation v = Vocation.ninja;
+    // var ability = v.ability;
+    // var description = v.description;
+    // var image = v.image;
+    // var title = v.title;
+
     return Scaffold(
         appBar: AppBar(
           title: StyledTitle("Your Characters"),
@@ -36,6 +43,7 @@ class _HomeState extends State<Home> {
                 ),
                 StyledButton(
                     onPressed: () {}, child: StyledHeading("Create New")),
+                // Text("$ability $description $image $title")
               ],
             ),
           ),
