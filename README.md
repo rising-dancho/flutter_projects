@@ -22,7 +22,8 @@ samples, guidance on mobile development, and a full API reference.
 ![image](https://github.com/user-attachments/assets/5e490771-9bb8-4e4c-9399-d90ef8f61958)
 
 # 3.) image_picker_demo
-![image](https://github.com/user-attachments/assets/8fa07d85-7fc8-4f6d-a7e7-36496f243cec)
+![image](https://github.com/user-attachments/assets/36e46ce7-420b-4c78-be77-73d2eb0bab30)
+
 
 
 
