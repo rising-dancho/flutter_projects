@@ -22,7 +22,7 @@ samples, guidance on mobile development, and a full API reference.
 ![image](https://github.com/user-attachments/assets/732548a9-1480-4335-8808-cf42742e55f8)
 
 # 2.2.) flutter_rpg (create screen)
-![image](https://github.com/user-attachments/assets/4fe25090-dc8d-4d47-8a1f-2f7a8d44a0ba)
+![image](https://github.com/user-attachments/assets/7693f44f-c4cd-43f2-9a7a-90def44689bb)
 
 # 3.) image_picker_demo
 ![image](https://github.com/user-attachments/assets/4d3a2968-b936-4119-aab3-d21daa9b6387)
