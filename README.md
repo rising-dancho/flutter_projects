@@ -18,10 +18,10 @@ samples, guidance on mobile development, and a full API reference.
 # 1.) coffee_card
 ![image](https://github.com/user-attachments/assets/ad23d426-af3c-4049-9d2b-faf49b8ed8af)
 
-# 2.1) flutter_rpg
+# 2.1.) flutter_rpg
 ![image](https://github.com/user-attachments/assets/732548a9-1480-4335-8808-cf42742e55f8)
 
-# 2.2) flutter_rpg (create screen)
+# 2.2.) flutter_rpg (create screen)
 ![image](https://github.com/user-attachments/assets/4fe25090-dc8d-4d47-8a1f-2f7a8d44a0ba)
 
 # 3.) image_picker_demo
