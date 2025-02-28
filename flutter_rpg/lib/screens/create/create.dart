@@ -25,20 +25,29 @@ class _CreateState extends State<Create> {
     super.dispose();
   }
 
+  // handling vocation selection
+  Vocation selectedVocation = Vocation.junkie;
+
+  // change the selectedVocation to whichever was passed and trigger a rerender using setState
+  void updateVocation(Vocation vocation) {
+    setState(() {
+      selectedVocation = vocation;
+    });
+  }
+
   // submit handler
   void handleSubmit() {
     if (_nameController.text.trim().isEmpty) {
-      print("name must not be empty");
+      // show an error
       return;
     }
 
     if (_sloganController.text.trim().isEmpty) {
-      print("slogan must not be empty");
+      // show an error
       return;
     }
 
-    print(_nameController.text);
-    print(_sloganController.text);
+    print(selectedVocation);
   }
 
   @override
@@ -112,10 +121,22 @@ class _CreateState extends State<Create> {
                 ),
 
                 // vocations
-                const VocationCard(vocation: Vocation.junkie),
-                const VocationCard(vocation: Vocation.ninja),
-                const VocationCard(vocation: Vocation.raider),
-                const VocationCard(vocation: Vocation.wizard),
+                VocationCard(
+                    selected: selectedVocation == Vocation.junkie,
+                    onTap: updateVocation,
+                    vocation: Vocation.junkie),
+                VocationCard(
+                    selected: selectedVocation == Vocation.ninja,
+                    onTap: updateVocation,
+                    vocation: Vocation.ninja),
+                VocationCard(
+                    selected: selectedVocation == Vocation.raider,
+                    onTap: updateVocation,
+                    vocation: Vocation.raider),
+                VocationCard(
+                    selected: selectedVocation == Vocation.wizard,
+                    onTap: updateVocation,
+                    vocation: Vocation.wizard),
 
                 Center(
                   child: StyledButton(
