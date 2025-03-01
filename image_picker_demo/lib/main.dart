@@ -9,5 +9,5 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
         useMaterial3: true,
       ),
-      home: Home(title: "Image Picker")));
+      home: Home(title: "Count Inventory Items")));
 }
