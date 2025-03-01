@@ -37,11 +37,11 @@ class Character with Stats {
 List<Character> characters = [
   Character(
       id: '1', name: 'Klara', vocation: Vocation.wizard, slogan: 'Kapumf!'),
-  // Character(
-  //     id: '2',
-  //     name: 'Jonny',
-  //     vocation: Vocation.junkie,
-  //     slogan: 'Light me up...'),
+  Character(
+      id: '2',
+      name: 'Jonny',
+      vocation: Vocation.junkie,
+      slogan: 'Light me up...'),
   // Character(
   //     id: '3',
   //     name: 'Crimson',
