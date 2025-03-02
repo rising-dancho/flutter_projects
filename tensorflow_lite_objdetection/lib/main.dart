@@ -88,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: _imgFromGallery,
                     onLongPress: _imgFromCamera,
                     style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent),
                     child: Container(
                       margin: const EdgeInsets.only(top: 8),
