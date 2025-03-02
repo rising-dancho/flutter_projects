@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(const MyHomePage());
@@ -17,7 +21,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late ImagePicker imagePicker;
   File? _image;
-  var image;
+  ui.Image? image;
   // initialize object detector
   late ObjectDetector objectDetector;
 
@@ -25,11 +29,36 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     imagePicker = ImagePicker();
-    final options = ObjectDetectorOptions(
-        mode: DetectionMode.single,
-        classifyObjects: true,
-        multipleObjects: true);
+    // USE DEFAULT PRETRAINED MODEL: load initial pretrained object detector
+    // final options = ObjectDetectorOptions(
+    //     mode: DetectionMode.single,
+    //     classifyObjects: true,
+    //     multipleObjects: true);
+    // objectDetector = ObjectDetector(options: options);
+    loadModel();
+  }
+
+  loadModel() async {
+    final modelPath = await getModelPath('assets/ml/fruits_tm.tflite');
+    final options = LocalObjectDetectorOptions(
+      mode: DetectionMode.single,
+      modelPath: modelPath,
+      classifyObjects: true,
+      multipleObjects: true,
+    );
     objectDetector = ObjectDetector(options: options);
+  }
+
+  Future<String> getModelPath(String asset) async {
+    final path = '${(await getApplicationSupportDirectory()).path}/$asset';
+    await Directory(dirname(path)).create(recursive: true);
+    final file = File(path);
+    if (!await file.exists()) {
+      final byteData = await rootBundle.load(asset);
+      await file.writeAsBytes(byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    }
+    return file.path;
   }
 
   @override
@@ -84,12 +113,17 @@ class _MyHomePageState extends State<MyHomePage> {
     drawRectanglesAroundObjects();
   }
 
-  drawRectanglesAroundObjects() async {
-    image = await _image?.readAsBytes();
-    image = await decodeImageFromList(image);
+  Future<void> drawRectanglesAroundObjects() async {
+    if (_image == null) return;
+
+    // Read image bytes
+    Uint8List imageBytes = await _image!.readAsBytes();
+
+    // Decode image
+    ui.Image decodedImage = await decodeImageFromList(imageBytes);
+
     setState(() {
-      image;
-      objects;
+      image = decodedImage; // Now image is a ui.Image
     });
   }
 
@@ -127,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ? Center(
                               child: FittedBox(
                                 child: SizedBox(
-                                  width: image.width.toDouble(),
-                                  height: image.width.toDouble(),
+                                  width: image?.width.toDouble() ?? 0,
+                                  height: image?.height.toDouble() ?? 0,
                                   child: CustomPaint(
                                     painter: ObjectPainter(
                                         objectList: objects, imageFile: image),
@@ -179,7 +213,7 @@ class ObjectPainter extends CustomPainter {
       for (Label label in list) {
         print("${label.text}   ${label.confidence.toStringAsFixed(2)}");
         TextSpan span = TextSpan(
-            text: "${label.text} ${label.confidence.toStringAsFixed(2)}" ,
+            text: "${label.text} ${label.confidence.toStringAsFixed(2)}",
             style: const TextStyle(fontSize: 25, color: Colors.blue));
         TextPainter tp = TextPainter(
             text: span,
