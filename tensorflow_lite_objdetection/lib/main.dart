@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -17,11 +18,18 @@ class _MyHomePageState extends State<MyHomePage> {
   late ImagePicker imagePicker;
   File? _image;
   // var image;
+  // initialize object detector
+  late ObjectDetector objectDetector;
 
   @override
   void initState() {
     super.initState();
     imagePicker = ImagePicker();
+    final options = ObjectDetectorOptions(
+        mode: DetectionMode.single,
+        classifyObjects: true,
+        multipleObjects: true);
+    objectDetector = ObjectDetector(options: options);
   }
 
   @override
@@ -37,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //TODO choose image using gallery
   _imgFromGallery() async {
     XFile? pickedFile =
         await imagePicker.pickImage(source: ImageSource.gallery);
@@ -47,15 +54,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //TODO face detection code here
   doObjectDetection() async {
+    if (_image == null) {
+      print("No image selected!");
+      return;
+    }
+
+    print("Starting object detection...");
+    InputImage inputImage = InputImage.fromFile(_image!);
+
+    final List<DetectedObject> objects =
+        await objectDetector.processImage(inputImage);
+    print("Objects detected: ${objects.length}");
+
+    for (DetectedObject detectedObject in objects) {
+      final rect = detectedObject.boundingBox;
+      final trackingId = detectedObject.trackingId;
+
+      for (Label label in detectedObject.labels) {
+        print(
+            'RESPONSE: ${label.text} ${label.confidence} $rect $trackingId!!!');
+      }
+    }
+
     setState(() {
       _image;
     });
-    //drawRectanglesAroundObjects();
   }
 
-  // //TODO draw rectangles
   // drawRectanglesAroundObjects() async {
   //   image = await _image?.readAsBytes();
   //   image = await decodeImageFromList(image);
