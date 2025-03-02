@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late ImagePicker imagePicker;
   File? _image;
-  // var image;
+  var image;
   // initialize object detector
   late ObjectDetector objectDetector;
 
@@ -54,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // detected objects array
+  List<DetectedObject> objects = [];
   doObjectDetection() async {
     if (_image == null) {
       print("No image selected!");
@@ -63,8 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Starting object detection...");
     InputImage inputImage = InputImage.fromFile(_image!);
 
-    final List<DetectedObject> objects =
-        await objectDetector.processImage(inputImage);
+    objects = await objectDetector.processImage(inputImage);
     print("Objects detected: ${objects.length}");
 
     for (DetectedObject detectedObject in objects) {
@@ -80,27 +81,27 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _image;
     });
+    drawRectanglesAroundObjects();
   }
 
-  // drawRectanglesAroundObjects() async {
-  //   image = await _image?.readAsBytes();
-  //   image = await decodeImageFromList(image);
-  //   setState(() {
-  //     image;
-  //     objects;
-  //     result;
-  //   });
-  // }
+  drawRectanglesAroundObjects() async {
+    image = await _image?.readAsBytes();
+    image = await decodeImageFromList(image);
+    setState(() {
+      image;
+      objects;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
           body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('images/bg.jpg'), fit: BoxFit.cover),
-        ),
+        // decoration: const BoxDecoration(
+        //   image: DecorationImage(
+        //       image: AssetImage('images/bg.jpg'), fit: BoxFit.cover),
+        // ),
         child: Column(
           children: [
             const SizedBox(
@@ -117,55 +118,35 @@ class _MyHomePageState extends State<MyHomePage> {
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent),
                     child: Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      child: _image != null
-                          ? Image.file(
-                              _image!,
-                              width: 350,
-                              height: 350,
-                              fit: BoxFit.fill,
+                      width: 350,
+                      height: 350,
+                      margin: const EdgeInsets.only(
+                        top: 45,
+                      ),
+                      child: image != null
+                          ? Center(
+                              child: FittedBox(
+                                child: SizedBox(
+                                  width: image.width.toDouble(),
+                                  height: image.width.toDouble(),
+                                  child: CustomPaint(
+                                    painter: ObjectPainter(
+                                        objectList: objects, imageFile: image),
+                                  ),
+                                ),
+                              ),
                             )
                           : Container(
+                              color: Colors.pinkAccent,
                               width: 350,
                               height: 350,
-                              color: Colors.pinkAccent,
                               child: const Icon(
                                 Icons.camera_alt,
                                 color: Colors.black,
-                                size: 100,
+                                size: 53,
                               ),
                             ),
                     ),
-                    // Container(
-                    //   width: 350,
-                    //   height: 350,
-                    //   margin: const EdgeInsets.only(
-                    //     top: 45,
-                    //   ),
-                    //   child: image != null
-                    //       ? Center(
-                    //     child: FittedBox(
-                    //       child: SizedBox(
-                    //         width: image.width.toDouble(),
-                    //         height: image.width.toDouble(),
-                    //         child: CustomPaint(
-                    //           painter: ObjectPainter(
-                    //               objectList: objects, imageFile: image),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   )
-                    //       : Container(
-                    //     color: Colors.pinkAccent,
-                    //     width: 350,
-                    //     height: 350,
-                    //     child: const Icon(
-                    //       Icons.camera_alt,
-                    //       color: Colors.black,size: 53
-                    //       ,
-                    //     ),
-                    //   ),
-                    // ),
                   ),
                 ),
               ]),
@@ -177,38 +158,65 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// class ObjectPainter extends CustomPainter {
-//   List<DetectedObject> objectList;
-//   dynamic imageFile;
-//   ObjectPainter({required this.objectList, @required this.imageFile});
-//
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     if (imageFile != null) {
-//       canvas.drawImage(imageFile, Offset.zero, Paint());
-//     }
-//     Paint p = Paint();
-//     p.color = Colors.red;
-//     p.style = PaintingStyle.stroke;
-//     p.strokeWidth = 4;
-//
-//     for (DetectedObject rectangle in objectList) {
-//       canvas.drawRect(rectangle.boundingBox, p);
-//       var list = rectangle.labels;
-//       for(Label label in list){
-//         print("${label.text}   ${label.confidence.toStringAsFixed(2)}");
-//         TextSpan span = TextSpan(text: label.text,style: const TextStyle(fontSize: 25,color: Colors.blue));
-//         TextPainter tp = TextPainter(text: span, textAlign: TextAlign.left,textDirection: TextDirection.ltr);
-//         tp.layout();
-//         tp.paint(canvas, Offset(rectangle.boundingBox.left,rectangle.boundingBox.top));
-//         break;
-//       }
-//     }
-//
-//   }
-//
-//   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) {
-//     return true;
-//   }
-// }
+class ObjectPainter extends CustomPainter {
+  List<DetectedObject> objectList;
+  dynamic imageFile;
+  ObjectPainter({required this.objectList, @required this.imageFile});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (imageFile != null) {
+      canvas.drawImage(imageFile, Offset.zero, Paint());
+    }
+    Paint paint = Paint();
+    paint.color = Colors.green;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 6;
+
+    for (DetectedObject rectangle in objectList) {
+      canvas.drawRect(rectangle.boundingBox, paint);
+      var list = rectangle.labels;
+      for (Label label in list) {
+        print("${label.text}   ${label.confidence.toStringAsFixed(2)}");
+        TextSpan span = TextSpan(
+            text: "${label.text} ${label.confidence.toStringAsFixed(2)}" ,
+            style: const TextStyle(fontSize: 25, color: Colors.blue));
+        TextPainter tp = TextPainter(
+            text: span,
+            textAlign: TextAlign.left,
+            textDirection: TextDirection.ltr);
+        tp.layout();
+        tp.paint(canvas,
+            Offset(rectangle.boundingBox.left, rectangle.boundingBox.top));
+        break;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+// REMOVED CODE: 
+// Container(
+//                       margin: const EdgeInsets.only(top: 8),
+//                       child: _image != null
+//                           ? Image.file(
+//                               _image!,
+//                               width: 350,
+//                               height: 350,
+//                               fit: BoxFit.fill,
+//                             )
+//                           : Container(
+//                               width: 350,
+//                               height: 350,
+//                               color: Colors.pinkAccent,
+//                               child: const Icon(
+//                                 Icons.camera_alt,
+//                                 color: Colors.black,
+//                                 size: 100,
+//                               ),
+//                             ),
+//                     ),
