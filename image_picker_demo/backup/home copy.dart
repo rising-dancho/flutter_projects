@@ -127,63 +127,64 @@ class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white70,
-      appBar: AppBar(title: Text("Image Processor")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: GestureDetector(
-                onTapUp: addBoundingBox,
-                child: Screenshot(
-                  controller: screenshotController,
-                  child: Stack(
-                    children: [
-                      if (_selectedImage != null)
-                        Image.file(_selectedImage!,
-                            width: double.infinity, fit: BoxFit.cover),
-                      ...boxes.map((box) => Positioned(
-                            left: box["x"].toDouble(),
-                            top: box["y"].toDouble(),
-                            child: Container(
-                              width: box["width"].toDouble(),
-                              height: box["height"].toDouble(),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.red, width: 2),
-                              ),
+      appBar: AppBar(
+        title: Text(
+          "Image Processor",
+        ),
+        backgroundColor: Colors.white70,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTapUp: addBoundingBox,
+              child: Screenshot(
+                controller: screenshotController,
+                child: Stack(
+                  children: [
+                    if (_selectedImage != null)
+                      Image.file(_selectedImage!,
+                          width: double.infinity, fit: BoxFit.cover),
+                    ...boxes.map((box) => Positioned(
+                          left: box["x"].toDouble(),
+                          top: box["y"].toDouble(),
+                          child: Container(
+                            width: box["width"].toDouble(),
+                            height: box["height"].toDouble(),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.red, width: 2),
                             ),
-                          )),
-                    ],
-                  ),
+                          ),
+                        )),
+                  ],
                 ),
               ),
             ),
-            if (_selectedImage == null)
-              ElevatedButton(
-                  onPressed: pickImage, child: Text("Choose a photo")),
-            if (_selectedImage != null) ...[
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Enter file name",
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
+          ),
+          if (_selectedImage == null)
+            ElevatedButton(onPressed: pickImage, child: Text("Choose a photo")),
+          if (_selectedImage != null) ...[
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Enter file name",
+                filled: true,
+                fillColor: Colors.white,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(icon: Icon(Icons.refresh), onPressed: reset),
-                  IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () => setState(() => isAddingBox = true)),
-                  IconButton(icon: Icon(Icons.check), onPressed: processImage),
-                  IconButton(icon: Icon(Icons.save), onPressed: saveImage),
-                ],
-              ),
-            ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(icon: Icon(Icons.refresh), onPressed: reset),
+                IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () => setState(() => isAddingBox = true)),
+                IconButton(icon: Icon(Icons.check), onPressed: processImage),
+                IconButton(icon: Icon(Icons.save), onPressed: saveImage),
+              ],
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
