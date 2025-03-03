@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker_demo/screens/home.dart';
+import 'package:image_picker_demo/screens/navigation_menu.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -9,5 +9,5 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
         useMaterial3: true,
       ),
-      home: Home(title: "Count Inventory Items")));
+      home: NavigationMenu()));
 }
