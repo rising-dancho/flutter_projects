@@ -10,6 +10,7 @@ class TensorflowLite extends StatefulWidget {
 }
 
 class _TensorflowLiteState extends State<TensorflowLite> {
+  // Image galler and camera variables
   File? image;
   late ImagePicker imagePicker;
 
@@ -22,6 +23,18 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   imageGallery() async {
     XFile? selectedImage =
         await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (selectedImage != null) {
+      image = File(selectedImage.path);
+      setState(() {
+        image;
+      });
+    }
+  }
+
+  useCamera() async {
+    XFile? selectedImage =
+        await imagePicker.pickImage(source: ImageSource.camera);
 
     if (selectedImage != null) {
       image = File(selectedImage.path);
@@ -46,13 +59,13 @@ class _TensorflowLiteState extends State<TensorflowLite> {
             children: [
               Container(
                 margin: const EdgeInsets.all(8),
-                child:  image == null
-                  ? Icon(Icons.add_photo_alternate_sharp, size: 120)
-                  : Image.file(image!),
+                child: image == null
+                    ? Icon(Icons.add_photo_alternate_sharp, size: 120)
+                    : Image.file(image!),
               ),
               ElevatedButton(
                   onPressed: imageGallery,
-                  onLongPress: () {},
+                  onLongPress: useCamera,
                   child: const Text("Choose/Capture")),
               ElevatedButton(
                 onPressed: () {},
