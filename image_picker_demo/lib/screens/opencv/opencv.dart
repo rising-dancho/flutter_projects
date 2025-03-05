@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_demo/logic/photo_viewer.dart';
 import 'dart:io';
 import 'package:screenshot/screenshot.dart';
@@ -13,9 +14,43 @@ class OpenCV extends StatefulWidget {
 }
 
 class _OpenCVState extends State<OpenCV> {
-  File? _selectedImage;
+  // drawing boxes
   List<Map<String, dynamic>> boxes = [];
   final ScreenshotController screenshotController = ScreenshotController();
+
+  // image_picker
+  File? _selectedImage;
+  late ImagePicker imagePicker;
+
+  @override
+  void initState() {
+    super.initState();
+    imagePicker = ImagePicker();
+  }
+
+  imageGallery() async {
+    XFile? selectedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (selectedImage != null) {
+      _selectedImage = File(selectedImage.path);
+      setState(() {
+        _selectedImage;
+      });
+    }
+  }
+
+  useCamera() async {
+    XFile? selectedImage =
+        await imagePicker.pickImage(source: ImageSource.camera);
+
+    if (selectedImage != null) {
+      _selectedImage = File(selectedImage.path);
+      setState(() {
+        _selectedImage;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,42 +71,39 @@ class _OpenCVState extends State<OpenCV> {
                   _selectedImage == null
                       ? Expanded(
                           child: Container(
-                            width: double
-                                .infinity, // Makes the container expand horizontally
+                            width: double.infinity,
+                            height: double.infinity,
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: Colors
-                                  .white, // Adds a background to prevent weird scaling issues
+                              color: Colors.white,
                             ),
-                            child: _selectedImage == null
-                                ? Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    size: 120,
-                                    color: Colors.grey[500],
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child:
-                                        PhotoViewer(imageFile: _selectedImage!),
-                                  ),
+                            child: Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 120,
+                              color: Colors.grey[500],
+                            ),
                           ),
                         )
                       : GestureDetector(
-                          // onTapUp: addBoundingBox,
                           child: Screenshot(
                             controller: screenshotController,
                             child: Stack(
                               children: [
-                                if (_selectedImage != null)
-                                  Center(
-                                    child: Image.file(
-                                      _selectedImage!,
+                                Center(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      fit: BoxFit.contain,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.6, // Adjust height if needed
+                                      child: PhotoViewer(
+                                          imageFile: _selectedImage!),
                                     ),
                                   ),
+                                ),
                                 ...boxes.map((box) => Positioned(
                                       left: box["x"].toDouble(),
                                       top: box["y"].toDouble(),
@@ -90,15 +122,17 @@ class _OpenCVState extends State<OpenCV> {
                         ),
                 ],
               )),
-              ElevatedButton(
-                onPressed: () {},
-                onLongPress: () {},
-                child: const Text("Choose/Capture"),
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text("Upload and Process"),
-              ),
+              if (_selectedImage == null) ...[
+                ElevatedButton(
+                  onPressed: imageGallery,
+                  onLongPress: useCamera,
+                  child: const Text("Choose/Capture"),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Upload and Process"),
+                ),
+              ],
               if (_selectedImage != null) ...[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
