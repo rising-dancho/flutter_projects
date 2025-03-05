@@ -4,30 +4,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:screenshot/screenshot.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class OpenCV extends StatefulWidget {
+  const OpenCV({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ImageProcessingScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  State<OpenCV> createState() => _OpenCVState();
 }
 
-class ImageProcessingScreen extends StatefulWidget {
-  const ImageProcessingScreen({super.key});
-
-  @override
-  State<ImageProcessingScreen> createState() => _ImageProcessingScreenState();
-}
-
-class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
+class _OpenCVState extends State<OpenCV> {
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
   List<Map<String, dynamic>> boxes = [];
-
   bool isAddingBox = false;
 
   final ScreenshotController screenshotController = ScreenshotController();
@@ -39,12 +26,13 @@ class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
+        boxes.clear(); // Reset boxes when a new image is selected
       });
     }
   }
 
   void addBoundingBox(TapUpDetails details) {
-    if (isAddingBox) {
+    if (isAddingBox && _selectedImage != null) {
       setState(() {
         boxes.add({
           "id": uuid.v4(),
@@ -53,7 +41,7 @@ class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
           "width": 100,
           "height": 100,
         });
-        isAddingBox = false;
+        isAddingBox = false; // Turn off adding mode after adding a box
       });
     }
   }
@@ -62,33 +50,37 @@ class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
     setState(() {
       _selectedImage = null;
       boxes.clear();
+      isAddingBox = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("OpenCV"),
-        ),
+        appBar: AppBar(title: Text("OpenCV")),
         body: Container(
-            padding: EdgeInsets.all(16),
-            color: Colors.grey,
-            width: double.infinity,
-            height: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
+          padding: EdgeInsets.all(16),
+          color: Colors.grey[300],
+          width: double.infinity,
+          height: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: GestureDetector(
                   onTapUp: addBoundingBox,
                   child: Screenshot(
                     controller: screenshotController,
                     child: Stack(
                       children: [
                         if (_selectedImage != null)
-                          Image.file(_selectedImage!,
-                              width: double.infinity, fit: BoxFit.cover),
+                          Center(
+                            child: Image.file(
+                              _selectedImage!,
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ...boxes.map((box) => Positioned(
                               left: box["x"].toDouble(),
                               top: box["y"].toDouble(),
@@ -105,30 +97,36 @@ class _ImageProcessingScreenState extends State<ImageProcessingScreen> {
                     ),
                   ),
                 ),
-                if (_selectedImage == null)
-                  ElevatedButton(
-                      onPressed: pickImage, child: Text("Choose a photo")),
-                if (_selectedImage != null) ...[
-                  TextField(
+              ),
+              if (_selectedImage == null)
+                ElevatedButton(
+                    onPressed: pickImage, child: Text("Choose a photo")),
+              if (_selectedImage != null) ...[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
                     decoration: InputDecoration(
                       hintText: "Enter file name",
                       filled: true,
                       fillColor: Colors.white,
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(icon: Icon(Icons.refresh), onPressed: reset),
-                      IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () => setState(() => isAddingBox = true)),
-                      IconButton(icon: Icon(Icons.check), onPressed: () {}),
-                      IconButton(icon: Icon(Icons.save), onPressed: () {}),
-                    ],
-                  ),
-                ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(icon: Icon(Icons.refresh), onPressed: reset),
+                    IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () => setState(() => isAddingBox = true)),
+                    IconButton(icon: Icon(Icons.check), onPressed: () {}),
+                    IconButton(icon: Icon(Icons.save), onPressed: () {}),
+                  ],
+                ),
               ],
-            )));
+            ],
+          ),
+        ));
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker_demo/screens/about/image_upload.dart';
-import 'package:image_picker_demo/screens/home/home.dart';
+import 'package:image_picker_demo/screens/about/tensorflow_lite.dart';
+import 'package:image_picker_demo/screens/home/opencv.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -44,5 +44,5 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex =
       0.obs; // would only rerender whatever is inside obx
 
-  final screens = [Home(), ImageUpload()];
+  final screens = [OpenCV(), TensorflowLite()];
 }

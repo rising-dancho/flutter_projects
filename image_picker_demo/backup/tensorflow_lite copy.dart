@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ImageUpload extends StatefulWidget {
-  const ImageUpload({super.key});
+class TensorflowLite extends StatefulWidget {
+  const TensorflowLite({super.key});
 
   @override
-  State<ImageUpload> createState() => _ImageUploadState();
+  State<TensorflowLite> createState() => _TensorflowLiteState();
 }
 
-class _ImageUploadState extends State<ImageUpload> {
+class _TensorflowLiteState extends State<TensorflowLite> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
