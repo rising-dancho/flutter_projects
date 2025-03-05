@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_demo/logic/photo_viewer.dart';
 import 'dart:io';
 import 'package:screenshot/screenshot.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:uuid/uuid.dart';
 
 class OpenCV extends StatefulWidget {
@@ -14,11 +13,8 @@ class OpenCV extends StatefulWidget {
 }
 
 class _OpenCVState extends State<OpenCV> {
-  // drawing boxes
   List<Map<String, dynamic>> boxes = [];
   final ScreenshotController screenshotController = ScreenshotController();
-
-  // image_picker
   File? _selectedImage;
   late ImagePicker imagePicker;
 
@@ -33,9 +29,8 @@ class _OpenCVState extends State<OpenCV> {
         await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (selectedImage != null) {
-      _selectedImage = File(selectedImage.path);
       setState(() {
-        _selectedImage;
+        _selectedImage = File(selectedImage.path);
       });
     }
   }
@@ -45,9 +40,8 @@ class _OpenCVState extends State<OpenCV> {
         await imagePicker.pickImage(source: ImageSource.camera);
 
     if (selectedImage != null) {
-      _selectedImage = File(selectedImage.path);
       setState(() {
-        _selectedImage;
+        _selectedImage = File(selectedImage.path);
       });
     }
   }
@@ -55,111 +49,110 @@ class _OpenCVState extends State<OpenCV> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("OpenCV")),
-        body: Container(
-          padding: EdgeInsets.all(16),
-          color: Colors.green[300],
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                  child: Column(
+      appBar: AppBar(title: Text("OpenCV")),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        color: Colors.green[300],
+        width: double.infinity,
+        height: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
                 children: [
-                  _selectedImage == null
-                      ? Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            margin: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
+                  if (_selectedImage == null)
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        child: Icon(
+                          Icons.add_photo_alternate_outlined,
+                          size: 120,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    )
+                  else
+                    GestureDetector(
+                      child: Screenshot(
+                        controller: screenshotController,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child:
+                                      PhotoViewer(imageFile: _selectedImage!),
+                                ),
+                              ),
                             ),
-                            child: Icon(
-                              Icons.add_photo_alternate_outlined,
-                              size: 120,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        )
-                      : GestureDetector(
-                          child: Screenshot(
-                            controller: screenshotController,
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.9,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.6, // Adjust height if needed
-                                      child: PhotoViewer(
-                                          imageFile: _selectedImage!),
+                            ...boxes.map((box) => Positioned(
+                                  left: box["x"].toDouble(),
+                                  top: box["y"].toDouble(),
+                                  child: Container(
+                                    width: box["width"].toDouble(),
+                                    height: box["height"].toDouble(),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.red, width: 2),
                                     ),
                                   ),
-                                ),
-                                ...boxes.map((box) => Positioned(
-                                      left: box["x"].toDouble(),
-                                      top: box["y"].toDouble(),
-                                      child: Container(
-                                        width: box["width"].toDouble(),
-                                        height: box["height"].toDouble(),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.red, width: 2),
-                                        ),
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          ),
+                                )),
+                          ],
                         ),
-                ],
-              )),
-              if (_selectedImage == null) ...[
-                ElevatedButton(
-                  onPressed: imageGallery,
-                  onLongPress: useCamera,
-                  child: const Text("Choose/Capture"),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("Upload and Process"),
-                ),
-              ],
-              if (_selectedImage != null) ...[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Enter file name",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(),
+                      ),
                     ),
+                ],
+              ),
+            ),
+            if (_selectedImage == null) ...[
+              ElevatedButton(
+                onPressed: imageGallery,
+                onLongPress: useCamera,
+                child: const Text("Choose/Capture"),
+              ),
+            ],
+            if (_selectedImage != null) ...[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Enter file name",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
-                    IconButton(icon: Icon(Icons.add), onPressed: () {}),
-                    IconButton(icon: Icon(Icons.close), onPressed: () {}),
-                    IconButton(icon: Icon(Icons.save), onPressed: () {}),
-                  ],
-                ),
-              ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
+                  IconButton(icon: Icon(Icons.add), onPressed: () {}),
+                  IconButton(icon: Icon(Icons.close), onPressed: () {}),
+                  IconButton(icon: Icon(Icons.save), onPressed: () {}),
+                ],
+              ),
             ],
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }
+
 
 // File? _selectedImage;
 //   final ImagePicker _picker = ImagePicker();
