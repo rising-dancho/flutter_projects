@@ -67,40 +67,50 @@ class _OpenCVState extends State<OpenCV> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: GestureDetector(
-                  onTapUp: addBoundingBox,
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: Stack(
-                      children: [
-                        if (_selectedImage != null)
-                          Center(
-                            child: Image.file(
-                              _selectedImage!,
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              fit: BoxFit.contain,
+                  child: Column(
+                children: [
+                  _selectedImage == null
+                      ? Expanded(
+                          child: Center(
+                            child: ElevatedButton(
+                              onPressed: pickImage,
+                              child: Text("Choose/Capture"),
                             ),
                           ),
-                        ...boxes.map((box) => Positioned(
-                              left: box["x"].toDouble(),
-                              top: box["y"].toDouble(),
-                              child: Container(
-                                width: box["width"].toDouble(),
-                                height: box["height"].toDouble(),
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: Colors.red, width: 2),
-                                ),
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              if (_selectedImage == null)
-                ElevatedButton(
-                    onPressed: pickImage, child: Text("Choose a photo")),
+                        )
+                      : GestureDetector(
+                          onTapUp: addBoundingBox,
+                          child: Screenshot(
+                            controller: screenshotController,
+                            child: Stack(
+                              children: [
+                                if (_selectedImage != null)
+                                  Center(
+                                    child: Image.file(
+                                      _selectedImage!,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ...boxes.map((box) => Positioned(
+                                      left: box["x"].toDouble(),
+                                      top: box["y"].toDouble(),
+                                      child: Container(
+                                        width: box["width"].toDouble(),
+                                        height: box["height"].toDouble(),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.red, width: 2),
+                                        ),
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ),
+                ],
+              )),
               if (_selectedImage != null) ...[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -120,7 +130,7 @@ class _OpenCVState extends State<OpenCV> {
                     IconButton(
                         icon: Icon(Icons.add),
                         onPressed: () => setState(() => isAddingBox = true)),
-                    IconButton(icon: Icon(Icons.check), onPressed: () {}),
+                    IconButton(icon: Icon(Icons.close), onPressed: () {}),
                     IconButton(icon: Icon(Icons.save), onPressed: () {}),
                   ],
                 ),

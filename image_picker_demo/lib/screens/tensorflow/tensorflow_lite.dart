@@ -12,7 +12,7 @@ class TensorflowLite extends StatefulWidget {
 
 class _TensorflowLiteState extends State<TensorflowLite> {
   // Image galler and camera variables
-  File? image;
+  File? _selectedImage;
   late ImagePicker imagePicker;
 
   @override
@@ -26,9 +26,9 @@ class _TensorflowLiteState extends State<TensorflowLite> {
         await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (selectedImage != null) {
-      image = File(selectedImage.path);
+      _selectedImage = File(selectedImage.path);
       setState(() {
-        image;
+        _selectedImage;
       });
     }
   }
@@ -38,9 +38,9 @@ class _TensorflowLiteState extends State<TensorflowLite> {
         await imagePicker.pickImage(source: ImageSource.camera);
 
     if (selectedImage != null) {
-      image = File(selectedImage.path);
+      _selectedImage = File(selectedImage.path);
       setState(() {
-        image;
+        _selectedImage;
       });
     }
   }
@@ -51,7 +51,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
         appBar: AppBar(title: const Text("Tensorflow Lite")),
         body: Container(
           padding: EdgeInsets.all(16),
-          color: Colors.grey[300],
+          color: Colors.blue[300],
           width: double.infinity,
           height: double.infinity,
           child: Column(
@@ -68,7 +68,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
                     color: Colors
                         .white, // Adds a background to prevent weird scaling issues
                   ),
-                  child: image == null
+                  child: _selectedImage == null
                       ? Icon(
                           Icons.add_photo_alternate_outlined,
                           size: 120,
@@ -76,7 +76,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: PhotoViewer(imageFile: image!),
+                          child: PhotoViewer(imageFile: _selectedImage!),
                         ),
                 ),
               ),

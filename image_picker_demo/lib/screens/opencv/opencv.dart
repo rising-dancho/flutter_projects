@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker_demo/logic/photo_viewer.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:screenshot/screenshot.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:uuid/uuid.dart';
 
 class OpenCV extends StatefulWidget {
   const OpenCV({super.key});
@@ -13,46 +14,8 @@ class OpenCV extends StatefulWidget {
 
 class _OpenCVState extends State<OpenCV> {
   File? _selectedImage;
-  final ImagePicker _picker = ImagePicker();
   List<Map<String, dynamic>> boxes = [];
-  bool isAddingBox = false;
-
   final ScreenshotController screenshotController = ScreenshotController();
-  final uuid = Uuid();
-
-  Future<void> pickImage() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-        boxes.clear(); // Reset boxes when a new image is selected
-      });
-    }
-  }
-
-  void addBoundingBox(TapUpDetails details) {
-    if (isAddingBox && _selectedImage != null) {
-      setState(() {
-        boxes.add({
-          "id": uuid.v4(),
-          "x": details.localPosition.dx,
-          "y": details.localPosition.dy,
-          "width": 100,
-          "height": 100,
-        });
-        isAddingBox = false; // Turn off adding mode after adding a box
-      });
-    }
-  }
-
-  void reset() {
-    setState(() {
-      _selectedImage = null;
-      boxes.clear();
-      isAddingBox = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,26 +23,42 @@ class _OpenCVState extends State<OpenCV> {
         appBar: AppBar(title: Text("OpenCV")),
         body: Container(
           padding: EdgeInsets.all(16),
-          color: Colors.grey[300],
+          color: Colors.green[300],
           width: double.infinity,
           height: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                   child: Column(
                 children: [
                   _selectedImage == null
                       ? Expanded(
-                          child: Center(
-                            child: ElevatedButton(
-                              onPressed: pickImage,
-                              child: Text("Choose a photo"),
+                          child: Container(
+                            width: double
+                                .infinity, // Makes the container expand horizontally
+                            margin: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors
+                                  .white, // Adds a background to prevent weird scaling issues
                             ),
+                            child: _selectedImage == null
+                                ? Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: 120,
+                                    color: Colors.grey[500],
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child:
+                                        PhotoViewer(imageFile: _selectedImage!),
+                                  ),
                           ),
                         )
                       : GestureDetector(
-                          onTapUp: addBoundingBox,
+                          // onTapUp: addBoundingBox,
                           child: Screenshot(
                             controller: screenshotController,
                             child: Stack(
@@ -111,6 +90,15 @@ class _OpenCVState extends State<OpenCV> {
                         ),
                 ],
               )),
+              ElevatedButton(
+                onPressed: () {},
+                onLongPress: () {},
+                child: const Text("Choose/Capture"),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text("Upload and Process"),
+              ),
               if (_selectedImage != null) ...[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -126,10 +114,8 @@ class _OpenCVState extends State<OpenCV> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(icon: Icon(Icons.refresh), onPressed: reset),
-                    IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () => setState(() => isAddingBox = true)),
+                    IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
+                    IconButton(icon: Icon(Icons.add), onPressed: () {}),
                     IconButton(icon: Icon(Icons.close), onPressed: () {}),
                     IconButton(icon: Icon(Icons.save), onPressed: () {}),
                   ],
@@ -140,3 +126,45 @@ class _OpenCVState extends State<OpenCV> {
         ));
   }
 }
+
+// File? _selectedImage;
+//   final ImagePicker _picker = ImagePicker();
+//   List<Map<String, dynamic>> boxes = [];
+//   bool isAddingBox = false;
+
+//   final ScreenshotController screenshotController = ScreenshotController();
+//   final uuid = Uuid();
+
+//   Future<void> pickImage() async {
+//     final XFile? pickedFile =
+//         await _picker.pickImage(source: ImageSource.gallery);
+//     if (pickedFile != null) {
+//       setState(() {
+//         _selectedImage = File(pickedFile.path);
+//         boxes.clear(); // Reset boxes when a new image is selected
+//       });
+//     }
+//   }
+
+//   void addBoundingBox(TapUpDetails details) {
+//     if (isAddingBox && _selectedImage != null) {
+//       setState(() {
+//         boxes.add({
+//           "id": uuid.v4(),
+//           "x": details.localPosition.dx,
+//           "y": details.localPosition.dy,
+//           "width": 100,
+//           "height": 100,
+//         });
+//         isAddingBox = false; // Turn off adding mode after adding a box
+//       });
+//     }
+//   }
+
+//   void reset() {
+//     setState(() {
+//       _selectedImage = null;
+//       boxes.clear();
+//       isAddingBox = false;
+//     });
+//   }
