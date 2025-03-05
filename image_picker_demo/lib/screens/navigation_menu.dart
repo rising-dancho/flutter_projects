@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker_demo/screens/about/tensorflow_lite.dart';
-import 'package:image_picker_demo/screens/home/opencv.dart';
+import 'package:image_picker_demo/screens/tensorflow/tensorflow_lite.dart';
+import 'package:image_picker_demo/screens/opencv/opencv.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -39,7 +39,7 @@ class NavigationMenu extends StatelessWidget {
 }
 
 // dl getx package:  flutter pub add get
-//manage navigation menu without using Stateful widget classes
+// manage navigation menu without using Stateful widget classes
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex =
       0.obs; // would only rerender whatever is inside obx

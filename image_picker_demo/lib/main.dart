@@ -3,7 +3,7 @@ import 'package:image_picker_demo/screens/navigation_menu.dart';
 
 void main() {
   runApp(MaterialApp(
-      title: 'Image Picker Demo',
+      title: 'TecTags: Object Counting App',
       debugShowCheckedModeBanner: false, // Removes the "Demo" banner
       home: NavigationMenu()));
 }

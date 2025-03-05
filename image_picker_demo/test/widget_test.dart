@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
-import 'package:image_picker_demo/screens/home/opencv.dart';
+import 'package:image_picker_demo/screens/opencv/opencv.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
