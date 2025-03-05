@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_demo/logic/photo_viewer.dart';
 
 class TensorflowLite extends StatefulWidget {
   const TensorflowLite({super.key});
@@ -57,11 +58,27 @@ class _TensorflowLiteState extends State<TensorflowLite> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: image == null
-                    ? Icon(Icons.add_photo_alternate_sharp, size: 120)
-                    : Image.file(image!),
+              Expanded(
+                child: Container(
+                  width: double
+                      .infinity, // Makes the container expand horizontally
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors
+                        .white, // Adds a background to prevent weird scaling issues
+                  ),
+                  child: image == null
+                      ? Icon(
+                          Icons.add_photo_alternate_outlined,
+                          size: 120,
+                          color: Colors.grey[500],
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: PhotoViewer(imageFile: image!),
+                        ),
+                ),
               ),
               ElevatedButton(
                   onPressed: imageGallery,
