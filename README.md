@@ -27,6 +27,8 @@ samples, guidance on mobile development, and a full API reference.
 # 3.) image_picker_demo
 ![image](https://github.com/user-attachments/assets/4d3a2968-b936-4119-aab3-d21daa9b6387)
 
+# 4.1) object detection 
+![image](https://github.com/user-attachments/assets/b7526a62-4e9c-4577-a71f-399aa09c7b63)
 
-
-
+# 4.2) object detection 
+![image](https://github.com/user-attachments/assets/2fe0237f-6c82-45b5-af1c-f47574f29e63)
