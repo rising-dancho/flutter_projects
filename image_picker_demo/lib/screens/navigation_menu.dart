@@ -28,7 +28,7 @@ class NavigationMenu extends StatelessWidget {
                   label: "OpenCV"),
               NavigationDestination(
                   icon: Icon(
-                    Icons.share,
+                    Icons.polyline,
                     color: Colors.grey,
                   ),
                   label: "Tensorflow Lite"),
