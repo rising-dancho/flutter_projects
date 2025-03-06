@@ -86,17 +86,17 @@ class _OpenCVState extends State<OpenCV> {
                         child: Stack(
                           children: [
                             Center(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.6,
-                                  child:
-                                      PhotoViewer(imageFile: _selectedImage!),
-                                ),
-                              ),
+                              // child: ClipRRect(
+                              //   borderRadius: BorderRadius.circular(12),
+                              //   child: SizedBox(
+                              //     width:
+                              //         MediaQuery.of(context).size.width * 0.9,
+                              //     height:
+                              //         MediaQuery.of(context).size.height * 0.6,
+                              //     child:
+                              //         PhotoViewer(imageFile: _selectedImage!),
+                              //   ),
+                              // ),
                             ),
                             ...boxes.map((box) => Positioned(
                                   left: box["x"].toDouble(),

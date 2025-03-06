@@ -15,14 +15,13 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() =>  _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  File? _image;
   late ImagePicker imagePicker;
-  
-  ui.Image? image;
+  File? _image;
+  ui.Image? image_for_drawing;
   // initialize object detector
   late ObjectDetector objectDetector;
 
@@ -124,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ui.Image decodedImage = await decodeImageFromList(imageBytes);
 
     setState(() {
-      image = decodedImage; // Now image is a ui.Image
+      image_for_drawing = decodedImage; // Now image is a ui.Image
     });
   }
 
@@ -158,15 +157,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       margin: const EdgeInsets.only(
                         top: 45,
                       ),
-                      child: image != null
+                      child: image_for_drawing != null
                           ? Center(
                               child: FittedBox(
                                 child: SizedBox(
-                                  width: image?.width.toDouble() ?? 0,
-                                  height: image?.height.toDouble() ?? 0,
+                                  width: image_for_drawing?.width.toDouble() ?? 0,
+                                  height: image_for_drawing?.height.toDouble() ?? 0,
                                   child: CustomPaint(
                                     painter: ObjectPainter(
-                                        objectList: objects, imageFile: image),
+                                        objectList: objects, imageFile: image_for_drawing),
                                   ),
                                 ),
                               ),
