@@ -20,6 +20,8 @@ class _OpenCVState extends State<OpenCV> {
 
   bool isAddingBox = false;
   var uuid = Uuid();
+  // Add this key to track the image size
+  final GlobalKey _imageKey = GlobalKey();
 
   @override
   void initState() {
@@ -38,8 +40,8 @@ class _OpenCVState extends State<OpenCV> {
   void addBoundingBox(TapUpDetails details) {
     if (isAddingBox && _selectedImage != null) {
       setState(() {
-        double boxWidth = 125;
-        double boxHeight = 125;
+        double boxWidth = 75;
+        double boxHeight = 75;
 
         boxes.add({
           "id": uuid.v4(),
@@ -111,12 +113,12 @@ class _OpenCVState extends State<OpenCV> {
                     )
                   else
                     GestureDetector(
-                      onTapUp:
-                          addBoundingBox, // Now this will receive TapUpDetails
+                      onTapUp: addBoundingBox,
                       child: Screenshot(
                         controller: screenshotController,
                         child: Stack(
                           children: [
+                            // Image and bounding boxes
                             Center(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
@@ -130,6 +132,8 @@ class _OpenCVState extends State<OpenCV> {
                                 ),
                               ),
                             ),
+
+                            // Bounding boxes overlay
                             ...boxes.map((box) => Positioned(
                                   left: box["x"].toDouble(),
                                   top: box["y"].toDouble(),
@@ -142,6 +146,25 @@ class _OpenCVState extends State<OpenCV> {
                                     ),
                                   ),
                                 )),
+
+                            // **Total Bounding Boxes Counter (Upper Right)**
+                            Positioned(
+                              top: 10, // Adjust for positioning
+                              right: 10,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Total Count: ${boxes.length}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
