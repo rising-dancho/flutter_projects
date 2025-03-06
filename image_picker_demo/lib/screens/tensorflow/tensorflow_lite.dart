@@ -28,6 +28,8 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   // detected objects array
   List<DetectedObject> objects = [];
 
+  bool isAddingBox = false;
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,14 @@ class _TensorflowLiteState extends State<TensorflowLite> {
     // initialize object detector inside initState (REQUIRED)
     objectDetector = ObjectDetector(options: options);
     // loadModel();
+  }
+
+  void reset() {
+    setState(() {
+      _selectedImage = null;
+      // boxes.clear();
+      isAddingBox = false;
+    });
   }
 
   // OBJECT DETECTION
@@ -125,6 +135,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
       setState(() {
         _selectedImage;
       });
+      doObjectDetection();
     }
   }
 
@@ -136,6 +147,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
       setState(() {
         _selectedImage;
       });
+      doObjectDetection();
     }
   }
 
@@ -176,57 +188,37 @@ class _TensorflowLiteState extends State<TensorflowLite> {
                         ),
                 ),
               ),
-              ElevatedButton(
+              if (_selectedImage == null) ...[
+                ElevatedButton(
                   onPressed: imageGallery,
                   onLongPress: useCamera,
-                  child: const Text("Choose/Capture")),
-              ElevatedButton(
-                onPressed: doObjectDetection,
-                child: const Text("Upload and Process"),
-              ),
+                  child: const Text("Choose/Capture"),
+                ),
+              ],
+              if (_selectedImage != null) ...[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Enter file name",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(icon: Icon(Icons.refresh), onPressed: reset),
+                    IconButton(icon: Icon(Icons.add), onPressed: () {}),
+                    IconButton(icon: Icon(Icons.close), onPressed: () {}),
+                    IconButton(icon: Icon(Icons.save), onPressed: () {}),
+                  ],
+                ),
+              ]
             ],
           ),
         ));
   }
 }
-
-// class ObjectPainter extends CustomPainter {
-//   List<DetectedObject> objectList;
-//   dynamic imageFile;
-//   ObjectPainter({required this.objectList, @required this.imageFile});
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     if (imageFile != null) {
-//       canvas.drawImage(imageFile, Offset.zero, Paint());
-//     }
-//     Paint paint = Paint();
-//     paint.color = Colors.green;
-//     paint.style = PaintingStyle.stroke;
-//     paint.strokeWidth = 6;
-
-//     for (DetectedObject rectangle in objectList) {
-//       canvas.drawRect(rectangle.boundingBox, paint);
-//       var list = rectangle.labels;
-//       for (Label label in list) {
-//         print("${label.text}   ${label.confidence.toStringAsFixed(2)}");
-//         TextSpan span = TextSpan(
-//             text: "${label.text} ${label.confidence.toStringAsFixed(2)}",
-//             style: const TextStyle(fontSize: 25, color: Colors.blue));
-//         TextPainter tp = TextPainter(
-//             text: span,
-//             textAlign: TextAlign.left,
-//             textDirection: TextDirection.ltr);
-//         tp.layout();
-//         tp.paint(canvas,
-//             Offset(rectangle.boundingBox.left, rectangle.boundingBox.top));
-//         break;
-//       }
-//     }
-//   }
-
-//   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) {
-//     return true;
-//   }
-// }

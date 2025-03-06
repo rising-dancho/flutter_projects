@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker_demo/logic/photo_viewer.dart';
+import 'package:image_picker_demo/logic/opencv_photo_viewer.dart';
 import 'dart:io';
 import 'package:screenshot/screenshot.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,10 +18,20 @@ class _OpenCVState extends State<OpenCV> {
   File? _selectedImage;
   late ImagePicker imagePicker;
 
+  bool isAddingBox = false;
+
   @override
   void initState() {
     super.initState();
     imagePicker = ImagePicker();
+  }
+
+  void reset() {
+    setState(() {
+      _selectedImage = null;
+      // boxes.clear();
+      isAddingBox = false;
+    });
   }
 
   imageGallery() async {
@@ -86,17 +96,17 @@ class _OpenCVState extends State<OpenCV> {
                         child: Stack(
                           children: [
                             Center(
-                              // child: ClipRRect(
-                              //   borderRadius: BorderRadius.circular(12),
-                              //   child: SizedBox(
-                              //     width:
-                              //         MediaQuery.of(context).size.width * 0.9,
-                              //     height:
-                              //         MediaQuery.of(context).size.height * 0.6,
-                              //     child:
-                              //         PhotoViewer(imageFile: _selectedImage!),
-                              //   ),
-                              // ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child:
+                                      PhotoViewer(imageFile: _selectedImage!),
+                                ),
+                              ),
                             ),
                             ...boxes.map((box) => Positioned(
                                   left: box["x"].toDouble(),
@@ -139,7 +149,7 @@ class _OpenCVState extends State<OpenCV> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
+                  IconButton(icon: Icon(Icons.refresh), onPressed: reset),
                   IconButton(icon: Icon(Icons.add), onPressed: () {}),
                   IconButton(icon: Icon(Icons.close), onPressed: () {}),
                   IconButton(icon: Icon(Icons.save), onPressed: () {}),
@@ -188,10 +198,3 @@ class _OpenCVState extends State<OpenCV> {
 //     }
 //   }
 
-//   void reset() {
-//     setState(() {
-//       _selectedImage = null;
-//       boxes.clear();
-//       isAddingBox = false;
-//     });
-//   }

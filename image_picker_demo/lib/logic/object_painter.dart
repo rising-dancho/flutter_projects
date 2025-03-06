@@ -16,7 +16,7 @@ class ObjectPainter extends CustomPainter {
 
     // Draw bounding boxes
     final boxPaint = Paint()
-      ..color = Colors.orange
+      ..color = Colors.green
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
 
