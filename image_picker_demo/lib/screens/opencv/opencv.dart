@@ -3,7 +3,7 @@ import 'package:image_picker_demo/logic/opencv_photo_viewer.dart';
 import 'dart:io';
 import 'package:screenshot/screenshot.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid.dart';
 
 class OpenCV extends StatefulWidget {
   const OpenCV({super.key});
@@ -19,6 +19,7 @@ class _OpenCVState extends State<OpenCV> {
   late ImagePicker imagePicker;
 
   bool isAddingBox = false;
+  var uuid = Uuid();
 
   @override
   void initState() {
@@ -32,6 +33,25 @@ class _OpenCVState extends State<OpenCV> {
       // boxes.clear();
       isAddingBox = false;
     });
+  }
+
+  void addBoundingBox(TapUpDetails details) {
+    if (isAddingBox && _selectedImage != null) {
+      setState(() {
+        double boxWidth = 125;
+        double boxHeight = 125;
+
+        boxes.add({
+          "id": uuid.v4(),
+          "x": details.localPosition.dx - (boxWidth / 2), // Center horizontally
+          "y": details.localPosition.dy - (boxHeight / 2), // Center vertically
+          "width": boxWidth,
+          "height": boxHeight,
+        });
+
+        isAddingBox = false; // Disable adding mode after placing the box
+      });
+    }
   }
 
   imageGallery() async {
@@ -91,6 +111,8 @@ class _OpenCVState extends State<OpenCV> {
                     )
                   else
                     GestureDetector(
+                      onTapUp:
+                          addBoundingBox, // Now this will receive TapUpDetails
                       child: Screenshot(
                         controller: screenshotController,
                         child: Stack(
@@ -150,7 +172,14 @@ class _OpenCVState extends State<OpenCV> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(icon: Icon(Icons.refresh), onPressed: reset),
-                  IconButton(icon: Icon(Icons.add), onPressed: () {}),
+                  IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        setState(() {
+                          isAddingBox =
+                              true; // Enable adding mode, then let user tap to add
+                        });
+                      }),
                   IconButton(icon: Icon(Icons.close), onPressed: () {}),
                   IconButton(icon: Icon(Icons.save), onPressed: () {}),
                 ],
@@ -183,18 +212,5 @@ class _OpenCVState extends State<OpenCV> {
 //     }
 //   }
 
-//   void addBoundingBox(TapUpDetails details) {
-//     if (isAddingBox && _selectedImage != null) {
-//       setState(() {
-//         boxes.add({
-//           "id": uuid.v4(),
-//           "x": details.localPosition.dx,
-//           "y": details.localPosition.dy,
-//           "width": 100,
-//           "height": 100,
-//         });
-//         isAddingBox = false; // Turn off adding mode after adding a box
-//       });
-//     }
-//   }
+
 
