@@ -48,7 +48,8 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   void reset() {
     setState(() {
       _selectedImage = null;
-      // boxes.clear();
+      image_for_drawing = null; // Clear this to prevent null check errors
+      objects = []; // Also clear detected objects
       isAddingBox = false;
     });
   }
