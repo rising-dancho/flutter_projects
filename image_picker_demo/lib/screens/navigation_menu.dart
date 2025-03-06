@@ -22,13 +22,13 @@ class NavigationMenu extends StatelessWidget {
             destinations: [
               NavigationDestination(
                   icon: Icon(
-                    Icons.format_list_numbered,
+                    Icons.spoke,
                     color: Colors.grey,
                   ),
                   label: "OpenCV"),
               NavigationDestination(
                   icon: Icon(
-                    Icons.info,
+                    Icons.share,
                     color: Colors.grey,
                   ),
                   label: "Tensorflow Lite"),
