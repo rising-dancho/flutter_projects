@@ -20,8 +20,8 @@ class _OpenCVState extends State<OpenCV> {
 
   bool isAddingBox = false;
   var uuid = Uuid();
-  // Add this key to track the image size
-  final GlobalKey _imageKey = GlobalKey();
+  // variable for whatever is typed in the TextField
+  final TextEditingController titleController = TextEditingController();
 
   @override
   void initState() {
@@ -63,6 +63,7 @@ class _OpenCVState extends State<OpenCV> {
     if (selectedImage != null) {
       setState(() {
         _selectedImage = File(selectedImage.path);
+        boxes.clear(); // Reset boxes when a new image is selected
       });
     }
   }
@@ -74,6 +75,7 @@ class _OpenCVState extends State<OpenCV> {
     if (selectedImage != null) {
       setState(() {
         _selectedImage = File(selectedImage.path);
+        boxes.clear(); // Reset boxes when a new image is selected
       });
     }
   }
@@ -146,8 +148,26 @@ class _OpenCVState extends State<OpenCV> {
                                     ),
                                   ),
                                 )),
-
-                            // **Total Bounding Boxes Counter (Upper Right)**
+                            // ** Title (Upper Left) **
+                            if (titleController.text.isNotEmpty)
+                              Positioned(
+                                top: 10, // Adjust as needed
+                                left: 10,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    titleController.text, // Display input text
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                            // ** Total Bounding Boxes Counter (Upper Right) **
                             Positioned(
                               top: 10, // Adjust for positioning
                               right: 10,
@@ -183,6 +203,10 @@ class _OpenCVState extends State<OpenCV> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
+                  controller: titleController, // Assign controller
+                  onChanged: (value) {
+                    setState(() {}); // Update UI when text changes
+                  },
                   decoration: InputDecoration(
                     hintText: "Enter file name",
                     filled: true,
@@ -214,26 +238,3 @@ class _OpenCVState extends State<OpenCV> {
     );
   }
 }
-
-
-// File? _selectedImage;
-//   final ImagePicker _picker = ImagePicker();
-//   List<Map<String, dynamic>> boxes = [];
-//   bool isAddingBox = false;
-
-//   final ScreenshotController screenshotController = ScreenshotController();
-//   final uuid = Uuid();
-
-//   Future<void> pickImage() async {
-//     final XFile? pickedFile =
-//         await _picker.pickImage(source: ImageSource.gallery);
-//     if (pickedFile != null) {
-//       setState(() {
-//         _selectedImage = File(pickedFile.path);
-//         boxes.clear(); // Reset boxes when a new image is selected
-//       });
-//     }
-//   }
-
-
-
