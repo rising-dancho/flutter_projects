@@ -27,7 +27,6 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   late ObjectDetector objectDetector;
   // detected objects array
   List<DetectedObject> objects = [];
-
   bool isAddingBox = false;
 
   @override

@@ -57,7 +57,19 @@ class _OpenCVState extends State<OpenCV> {
           "height": boxHeight,
         });
 
-        isAddingBox = false; // Disable adding mode after placing the box
+        // isAddingBox = false; // Disable adding mode after placing the box
+      });
+    }
+  }
+
+  void removeBoundingBox(TapUpDetails details) {
+    if (!isAddingBox && _selectedImage != null) {
+      setState(() {
+        boxes.removeWhere((box) =>
+            details.localPosition.dx >= box["x"] &&
+            details.localPosition.dx <= box["x"] + box["width"] &&
+            details.localPosition.dy >= box["y"] &&
+            details.localPosition.dy <= box["y"] + box["height"]);
       });
     }
   }
@@ -123,7 +135,15 @@ class _OpenCVState extends State<OpenCV> {
                     )
                   else
                     GestureDetector(
-                      onTapUp: addBoundingBox,
+                      onTapUp: (details) {
+                        if (isAddingBox) {
+                          addBoundingBox(details); // Add box if in add mode
+                        } else {
+                          removeBoundingBox(
+                              details); // Remove box if in remove mode
+                        }
+                      },
+                      
                       child: Screenshot(
                         controller: screenshotController,
                         child: Stack(
@@ -165,7 +185,7 @@ class _OpenCVState extends State<OpenCV> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
+                                    color: Color.fromRGBO(0, 0, 0, 0.7),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -183,7 +203,7 @@ class _OpenCVState extends State<OpenCV> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
+                                  color: Color.fromRGBO(0, 0, 0, 0.7),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -202,7 +222,7 @@ class _OpenCVState extends State<OpenCV> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
+                                    color: Color.fromRGBO(0, 0, 0, 0.7),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -247,14 +267,21 @@ class _OpenCVState extends State<OpenCV> {
                 children: [
                   IconButton(icon: Icon(Icons.refresh), onPressed: reset),
                   IconButton(
-                      icon: Icon(Icons.add),
+                    icon: Icon(Icons.add), // Change icon dynamically
+                    onPressed: () {
+                      setState(() {
+                        isAddingBox = !isAddingBox; // Toggle adding mode
+                      });
+                    },
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.close),
                       onPressed: () {
                         setState(() {
                           isAddingBox =
-                              true; // Enable adding mode, then let user tap to add
+                              !isAddingBox; // Switch between add & remove mode
                         });
                       }),
-                  IconButton(icon: Icon(Icons.close), onPressed: () {}),
                   IconButton(icon: Icon(Icons.save), onPressed: () {}),
                 ],
               ),
