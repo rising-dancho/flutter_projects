@@ -44,15 +44,6 @@ class _TensorflowLiteState extends State<TensorflowLite> {
     // loadModel();
   }
 
-  void reset() {
-    setState(() {
-      _selectedImage = null;
-      image_for_drawing = null; // Clear this to prevent null check errors
-      objects = []; // Also clear detected objects
-      isAddingBox = false;
-    });
-  }
-
   // OBJECT DETECTION
   // loadModel() async {
   //   final modelPath = await getModelPath('assets/ml/checkpoint_epoch_1.tflite');
@@ -149,6 +140,15 @@ class _TensorflowLiteState extends State<TensorflowLite> {
       });
       doObjectDetection();
     }
+  }
+
+  void reset() {
+    setState(() {
+      _selectedImage = null;
+      image_for_drawing = null; // Clear this to prevent null check errors
+      objects = []; // Also clear detected objects
+      isAddingBox = false;
+    });
   }
 
   @override
