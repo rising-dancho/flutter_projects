@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_demo/logic/photo_viewer.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:uuid/uuid.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:image_picker_demo/logic/opencv_photo_viewer.dart';
 import 'dart:ui' as ui;
 
 class TensorflowLite extends StatefulWidget {
@@ -16,7 +18,7 @@ class TensorflowLite extends StatefulWidget {
 }
 
 class _TensorflowLiteState extends State<TensorflowLite> {
-  // Image galler and camera variables
+  // Image gallery and camera variables
   File? _selectedImage;
   late ImagePicker imagePicker;
   // EXPLANATION about ui.Image:
@@ -27,7 +29,16 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   late ObjectDetector objectDetector;
   // detected objects array
   List<DetectedObject> objects = [];
+  // FOR LABELS
+  String timestamp = "";
+  // variable for whatever is typed in the TextField
+  final TextEditingController titleController = TextEditingController();
+  final ScreenshotController screenshotController = ScreenshotController();
+
+  // FOR BOUNDING BOXES
   bool isAddingBox = false;
+  var uuid = Uuid();
+  List<Map<String, dynamic>> boxes = [];
 
   @override
   void initState() {
@@ -151,6 +162,37 @@ class _TensorflowLiteState extends State<TensorflowLite> {
     }
   }
 
+  void addBoundingBox(TapUpDetails details) {
+    if (isAddingBox && _selectedImage != null) {
+      setState(() {
+        double boxWidth = 75;
+        double boxHeight = 75;
+
+        boxes.add({
+          "id": uuid.v4(),
+          "x": details.localPosition.dx - (boxWidth / 2), // Center horizontally
+          "y": details.localPosition.dy - (boxHeight / 2), // Center vertically
+          "width": boxWidth,
+          "height": boxHeight,
+        });
+
+        // isAddingBox = false; // Disable adding mode after placing the box
+      });
+    }
+  }
+
+  void removeBoundingBox(TapUpDetails details) {
+    if (!isAddingBox && _selectedImage != null) {
+      setState(() {
+        boxes.removeWhere((box) =>
+            details.localPosition.dx >= box["x"] &&
+            details.localPosition.dx <= box["x"] + box["width"] &&
+            details.localPosition.dy >= box["y"] &&
+            details.localPosition.dy <= box["y"] + box["height"]);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,29 +207,134 @@ class _TensorflowLiteState extends State<TensorflowLite> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Container(
-                  width: double
-                      .infinity, // Makes the container expand horizontally
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors
-                        .white, // Adds a background to prevent weird scaling issues
+                  child: Column(children: [
+                if (_selectedImage == null)
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                      ),
+                      child: Icon(
+                        Icons.add_photo_alternate_outlined,
+                        size: 120,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTapUp: (details) {
+                      if (isAddingBox) {
+                        addBoundingBox(details); // Add box if in add mode
+                      } else {
+                        removeBoundingBox(
+                            details); // Remove box if in remove mode
+                      }
+                    },
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: Stack(
+                        children: [
+                          // Image and bounding boxes
+                          Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.6,
+                                child: PhotoViewer(imageFile: _selectedImage!),
+                              ),
+                            ),
+                          ),
+
+                          // Bounding boxes overlay
+                          ...boxes.map((box) => Positioned(
+                                left: box["x"].toDouble(),
+                                top: box["y"].toDouble(),
+                                child: GestureDetector(
+                                  onPanUpdate: (details) {
+                                    setState(() {
+                                      box["x"] += details.delta.dx;
+                                      box["y"] += details.delta.dy;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: box["width"].toDouble(),
+                                    height: box["height"].toDouble(),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.red, width: 2),
+                                    ),
+                                  ),
+                                ),
+                              )),
+
+                          // ** Title (Upper Left) **
+                          if (titleController.text.isNotEmpty)
+                            Positioned(
+                              top: 10, // Adjust as needed
+                              left: 10,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(0, 0, 0, 0.7),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  titleController.text, // Display input text
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          // ** Total Bounding Boxes Counter (Upper Right) **
+                          Positioned(
+                            top: 10, // Adjust for positioning
+                            right: 10,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(0, 0, 0, 0.7),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'Total Count: ${boxes.length}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                            ),
+                          ),
+                          // ** Timestamp (Lower Left) **
+                          if (timestamp.isNotEmpty)
+                            Positioned(
+                              bottom: 10, // Adjust as needed
+                              left: 10,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(0, 0, 0, 0.7),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  timestamp, // Display timestamp
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: image_for_drawing == null
-                      ? Icon(
-                          Icons.add_photo_alternate_outlined,
-                          size: 120,
-                          color: Colors.grey[500],
-                        )
-                      : PhotoViewer(
-                          imageFile: _selectedImage!,
-                          imageForDrawing:
-                              image_for_drawing, // Passes correctly
-                          objects: objects,
-                        ),
-                ),
-              ),
+              ])),
               if (_selectedImage == null) ...[
                 ElevatedButton(
                   onPressed: imageGallery,

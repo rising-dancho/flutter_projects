@@ -12,8 +12,7 @@ class NavigationMenu extends StatelessWidget {
 
     return Scaffold(
       body: Obx(() => controller.screens[controller.selectedIndex.value]),
-      bottomNavigationBar: Obx(
-        () => NavigationBar(
+      bottomNavigationBar: Obx(() => NavigationBar(
             height: 80,
             elevation: 0,
             selectedIndex: controller.selectedIndex.value,
@@ -21,19 +20,15 @@ class NavigationMenu extends StatelessWidget {
                 controller.selectedIndex.value = index,
             destinations: [
               NavigationDestination(
-                  icon: Icon(
-                    Icons.spoke,
-                    color: Colors.grey,
-                  ),
-                  label: "OpenCV"),
+                icon: Icon(Icons.polyline, color: Colors.grey),
+                label: "Tensorflow Lite",
+              ),
               NavigationDestination(
-                  icon: Icon(
-                    Icons.polyline,
-                    color: Colors.grey,
-                  ),
-                  label: "Tensorflow Lite"),
-            ]),
-      ),
+                icon: Icon(Icons.spoke, color: Colors.grey),
+                label: "OpenCV",
+              ),
+            ],
+          )),
     );
   }
 }
@@ -44,5 +39,5 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex =
       0.obs; // would only rerender whatever is inside obx
 
-  final screens = [OpenCV(), TensorflowLite()];
+  final screens = [TensorflowLite(), OpenCV()];
 }

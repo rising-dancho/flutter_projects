@@ -143,7 +143,6 @@ class _OpenCVState extends State<OpenCV> {
                               details); // Remove box if in remove mode
                         }
                       },
-                      
                       child: Screenshot(
                         controller: screenshotController,
                         child: Stack(
@@ -167,15 +166,24 @@ class _OpenCVState extends State<OpenCV> {
                             ...boxes.map((box) => Positioned(
                                   left: box["x"].toDouble(),
                                   top: box["y"].toDouble(),
-                                  child: Container(
-                                    width: box["width"].toDouble(),
-                                    height: box["height"].toDouble(),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.red, width: 2),
+                                  child: GestureDetector(
+                                    onPanUpdate: (details) {
+                                      setState(() {
+                                        box["x"] += details.delta.dx;
+                                        box["y"] += details.delta.dy;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: box["width"].toDouble(),
+                                      height: box["height"].toDouble(),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.red, width: 2),
+                                      ),
                                     ),
                                   ),
                                 )),
+
                             // ** Title (Upper Left) **
                             if (titleController.text.isNotEmpty)
                               Positioned(
@@ -188,8 +196,7 @@ class _OpenCVState extends State<OpenCV> {
                                     color: Color.fromRGBO(0, 0, 0, 0.7),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Text(
-                                    titleController.text, // Display input text
+                                  child: Text(titleController.text, // Display input text
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 16),
                                   ),
