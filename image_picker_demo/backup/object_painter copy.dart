@@ -4,14 +4,9 @@ import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart
 
 class ObjectPainter extends CustomPainter {
   final List<DetectedObject> objectList;
-  final List<Rect> editableBoundingBoxes; // 👈 Manually controlled boxes
   final ui.Image imageFile;
 
-  ObjectPainter({
-    required this.objectList,
-    required this.imageFile,
-    required this.editableBoundingBoxes, // 👈 Pass the new list
-  });
+  ObjectPainter({required this.objectList, required this.imageFile});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -28,19 +23,20 @@ class ObjectPainter extends CustomPainter {
       paint,
     );
 
-    // Dynamic stroke width calculation
-    final double minStroke = 2.0;
-    final double maxStroke = 10.0;
-    final double strokeWidth = ((size.width + size.height) / 200).clamp(minStroke, maxStroke);
+    // Dynamic stroke width calculation based on image size
+    final double minStroke = 2.0; // Ensures visibility on small images
+    final double maxStroke = 10.0; // Prevents excessive thickness
+    final double strokeWidth = ((size.width + size.height) / 200).clamp(minStroke, maxStroke); // the lower the divisor the thicker the bounding box
 
     final boxPaint = Paint()
       ..color = Colors.green
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
+      ..strokeWidth = strokeWidth; // Dynamically adjusted stroke width
 
-    // 🎯 **Draw detected bounding boxes**
     for (DetectedObject detectedObject in objectList) {
       final rect = detectedObject.boundingBox;
+
+      // Scale bounding box to match displayed image size
       final scaledRect = Rect.fromLTRB(
         rect.left * scaleX,
         rect.top * scaleY,
@@ -48,6 +44,7 @@ class ObjectPainter extends CustomPainter {
         rect.bottom * scaleY,
       );
 
+      // Draw bounding box
       canvas.drawRect(scaledRect, boxPaint);
 
       // Draw label text
@@ -55,7 +52,7 @@ class ObjectPainter extends CustomPainter {
         final textSpan = TextSpan(
           text: "${label.text} (${(label.confidence * 100).toStringAsFixed(1)}%)",
           style: TextStyle(
-            fontSize: strokeWidth * 5.5,
+            fontSize: strokeWidth * 5.5, // Scale text size with stroke width: higher the more visible
             color: Colors.white,
             backgroundColor: Colors.blue,
           ),
@@ -69,31 +66,13 @@ class ObjectPainter extends CustomPainter {
 
         textPainter.layout();
         textPainter.paint(canvas, Offset(scaledRect.left, scaledRect.top - textPainter.height - 2));
-        break;
+        break; // Only show the first label
       }
-    }
-
-    // 🎯 **Draw manually added bounding boxes**
-    final manualBoxPaint = Paint()
-      ..color = Colors.red // Manually added boxes in red
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    for (Rect box in editableBoundingBoxes) {
-      final scaledBox = Rect.fromLTRB(
-        box.left * scaleX,
-        box.top * scaleY,
-        box.right * scaleX,
-        box.bottom * scaleY,
-      );
-      canvas.drawRect(scaledBox, manualBoxPaint);
     }
   }
 
   @override
   bool shouldRepaint(covariant ObjectPainter oldDelegate) {
-    return oldDelegate.objectList != objectList ||
-        oldDelegate.imageFile != imageFile ||
-        oldDelegate.editableBoundingBoxes != editableBoundingBoxes; // 👈 Check for changes
+    return oldDelegate.objectList != objectList || oldDelegate.imageFile != imageFile;
   }
 }
