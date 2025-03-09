@@ -34,19 +34,30 @@ class _PhotoViewerState extends State<PhotoViewer> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapUp: (TapUpDetails details) {
-        if (widget.isAddingBox) {
+        if (widget.isAddingBox && widget.imageForDrawing != null) {
           setState(() {
             double boxWidth = 75;
             double boxHeight = 75;
 
-            widget.editableBoundingBoxes.add(
-              Rect.fromLTWH(
-                details.localPosition.dx - (boxWidth / 2),
-                details.localPosition.dy - (boxHeight / 2),
-                boxWidth,
-                boxHeight,
-              ),
+            // Convert tap coordinates to the actual image space
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            Size widgetSize =
+                renderBox.size; // Size of the displayed image widget
+
+            double scaleX = widget.imageForDrawing!.width / widgetSize.width;
+            double scaleY = widget.imageForDrawing!.height / widgetSize.height;
+
+            double imageX = details.localPosition.dx * scaleX;
+            double imageY = details.localPosition.dy * scaleY;
+
+            Rect newBox = Rect.fromLTWH(
+              imageX - (boxWidth / 2),
+              imageY - (boxHeight / 2),
+              boxWidth,
+              boxHeight,
             );
+
+            widget.onNewBox(newBox);
           });
         }
       },

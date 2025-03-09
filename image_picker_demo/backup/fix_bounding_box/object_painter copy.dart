@@ -15,10 +15,6 @@ class ObjectPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Scale factors for bounding boxes
-    double scaleX = size.width / imageFile.width;
-    double scaleY = size.height / imageFile.height;
-
     // Get the aspect ratio of the image and the canvas
     double imageAspect = imageFile.width / imageFile.height;
     double canvasAspect = size.width / size.height;
@@ -38,6 +34,10 @@ class ObjectPainter extends CustomPainter {
       offsetY = 0;
       offsetX = (size.width - drawWidth) / 2;
     }
+
+    // ✅ Now, drawWidth and drawHeight are defined, so no error
+    double scaleX = drawWidth / imageFile.width;
+    double scaleY = drawHeight / imageFile.height;
 
     canvas.drawImageRect(
       imageFile,
@@ -63,10 +63,10 @@ class ObjectPainter extends CustomPainter {
     for (DetectedObject detectedObject in objectList) {
       final rect = detectedObject.boundingBox;
       final scaledRect = Rect.fromLTRB(
-        rect.left * scaleX,
-        rect.top * scaleY,
-        rect.right * scaleX,
-        rect.bottom * scaleY,
+        offsetX + (rect.left * scaleX),
+        offsetY + (rect.top * scaleY),
+        offsetX + (rect.right * scaleX),
+        offsetY + (rect.bottom * scaleY),
       );
 
       canvas.drawRect(scaledRect, boxPaint);
@@ -104,10 +104,10 @@ class ObjectPainter extends CustomPainter {
 
     for (Rect box in editableBoundingBoxes) {
       final scaledBox = Rect.fromLTRB(
-        box.left * scaleX,
-        box.top * scaleY,
-        box.right * scaleX,
-        box.bottom * scaleY,
+        offsetX + (box.left * scaleX),
+        offsetY + (box.top * scaleY),
+        offsetX + (box.right * scaleX),
+        offsetY + (box.bottom * scaleY),
       );
       canvas.drawRect(scaledBox, manualBoxPaint);
     }
