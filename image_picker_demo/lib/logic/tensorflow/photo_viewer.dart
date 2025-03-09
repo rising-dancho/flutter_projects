@@ -39,16 +39,44 @@ class _PhotoViewerState extends State<PhotoViewer> {
             double boxWidth = 75;
             double boxHeight = 75;
 
-            // Convert tap coordinates to the actual image space
+            // Get render box size
             RenderBox renderBox = context.findRenderObject() as RenderBox;
-            Size widgetSize =
-                renderBox.size; // Size of the displayed image widget
+            Size widgetSize = renderBox.size;
 
-            double scaleX = widget.imageForDrawing!.width / widgetSize.width;
-            double scaleY = widget.imageForDrawing!.height / widgetSize.height;
+            // Calculate image scale and offset
+            double imageAspect =
+                widget.imageForDrawing!.width / widget.imageForDrawing!.height;
+            double widgetAspect = widgetSize.width / widgetSize.height;
 
-            double imageX = details.localPosition.dx * scaleX;
-            double imageY = details.localPosition.dy * scaleY;
+            double scaleX, scaleY, offsetX = 0, offsetY = 0;
+
+            if (imageAspect > widgetAspect) {
+              // Image is wider -> fit width
+              scaleX = widget.imageForDrawing!.width / widgetSize.width;
+              scaleY = scaleX; // Maintain aspect ratio
+              offsetY = (widgetSize.height -
+                      (widget.imageForDrawing!.height / scaleY)) /
+                  2;
+            } else {
+              // Image is taller -> fit height
+              scaleY = widget.imageForDrawing!.height / widgetSize.height;
+              scaleX = scaleY; // Maintain aspect ratio
+              offsetX = (widgetSize.width -
+                      (widget.imageForDrawing!.width / scaleX)) /
+                  2;
+            }
+
+            // Convert tap coordinates to image space
+            double imageX = (details.localPosition.dx - offsetX) * scaleX;
+            double imageY = (details.localPosition.dy - offsetY) * scaleY;
+
+            if (imageX < 0 ||
+                imageY < 0 ||
+                imageX > widget.imageForDrawing!.width ||
+                imageY > widget.imageForDrawing!.height) {
+              // Tap was outside the image area
+              return;
+            }
 
             Rect newBox = Rect.fromLTWH(
               imageX - (boxWidth / 2),
