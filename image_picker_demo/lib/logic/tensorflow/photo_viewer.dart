@@ -36,8 +36,9 @@ class _PhotoViewerState extends State<PhotoViewer> {
       onTapUp: (TapUpDetails details) {
         if (widget.isAddingBox && widget.imageForDrawing != null) {
           setState(() {
-            double boxWidth = 75;
-            double boxHeight = 75;
+            // Dynamically set box size based on image dimensions
+            double boxWidth = widget.imageForDrawing!.width * 0.15;
+            double boxHeight = widget.imageForDrawing!.height * 0.15;
 
             // Get render box size
             RenderBox renderBox = context.findRenderObject() as RenderBox;
