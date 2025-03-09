@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_demo/logic/photo_viewer.dart';
+import 'package:image_picker_demo/logic/tensorflow/photo_viewer.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +27,7 @@ class _TensorflowLiteState extends State<TensorflowLite> {
   late ObjectDetector objectDetector;
   // detected objects array
   List<DetectedObject> objects = [];
+  List<Rect> editableBoundingBoxes = []; // Editable list of bounding boxes
   bool isAddingBox = false;
 
   @override
@@ -77,21 +78,17 @@ class _TensorflowLiteState extends State<TensorflowLite> {
     print("Starting object detection...");
     InputImage inputImage = InputImage.fromFile(_selectedImage!);
 
-    // PASS THE IMAGE INTO THE OBJECT DETECTOR:
-    objects = await objectDetector.processImage(inputImage);
-    print("Objects detected: ${objects.length}");
+    // Get detected objects
+    List<DetectedObject> detectedObjects =
+        await objectDetector.processImage(inputImage);
+    print("Objects detected: ${detectedObjects.length}");
 
-    for (DetectedObject detectedObject in objects) {
-      final rect = detectedObject.boundingBox;
-      final trackingId = detectedObject.trackingId;
-
-      for (Label label in detectedObject.labels) {
-        print('RESPONSE: ${label.text} ${label.confidence} $rect $trackingId!');
-      }
-    }
-
-    // Ensure setState updates UI
-    setState(() {});
+    // Convert detected objects to editable bounding boxes
+    setState(() {
+      objects = detectedObjects;
+      editableBoundingBoxes =
+          detectedObjects.map((obj) => obj.boundingBox).toList();
+    });
 
     drawRectanglesAroundObjects();
   }
@@ -151,6 +148,19 @@ class _TensorflowLiteState extends State<TensorflowLite> {
     });
   }
 
+  void addBoundingBox() {
+    setState(() {
+      // Example: Add a default box at the center of the image
+      editableBoundingBoxes.add(Rect.fromLTWH(50, 50, 100, 100));
+    });
+  }
+
+  void toggleAddingMode() {
+    setState(() {
+      isAddingBox = !isAddingBox;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,9 +192,15 @@ class _TensorflowLiteState extends State<TensorflowLite> {
                         )
                       : PhotoViewer(
                           imageFile: _selectedImage!,
-                          imageForDrawing:
-                              image_for_drawing, // Passes correctly
+                          imageForDrawing: image_for_drawing,
                           objects: objects,
+                          editableBoundingBoxes: editableBoundingBoxes,
+                          onNewBox: (Rect box) {
+                            setState(() {
+                              editableBoundingBoxes.add(box);
+                            });
+                          },
+                          isAddingBox: isAddingBox,
                         ),
                 ),
               ),
@@ -211,7 +227,12 @@ class _TensorflowLiteState extends State<TensorflowLite> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(icon: Icon(Icons.refresh), onPressed: reset),
-                    IconButton(icon: Icon(Icons.add), onPressed: () {}),
+                    IconButton(
+                      icon: Icon(isAddingBox
+                          ? Icons.check
+                          : Icons.add), // Change dynamically
+                      onPressed: toggleAddingMode,
+                    ),
                     IconButton(icon: Icon(Icons.close), onPressed: () {}),
                     IconButton(icon: Icon(Icons.save), onPressed: () {}),
                   ],

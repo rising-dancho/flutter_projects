@@ -19,19 +19,40 @@ class ObjectPainter extends CustomPainter {
     double scaleX = size.width / imageFile.width;
     double scaleY = size.height / imageFile.height;
 
-    // Draw the image resized to fit canvas
-    final paint = Paint();
+    // Get the aspect ratio of the image and the canvas
+    double imageAspect = imageFile.width / imageFile.height;
+    double canvasAspect = size.width / size.height;
+
+    double drawWidth, drawHeight, offsetX, offsetY;
+
+    if (imageAspect > canvasAspect) {
+      // Image is wider than canvas -> fit width
+      drawWidth = size.width;
+      drawHeight = size.width / imageAspect;
+      offsetX = 0;
+      offsetY = (size.height - drawHeight) / 2;
+    } else {
+      // Image is taller than canvas -> fit height
+      drawHeight = size.height;
+      drawWidth = size.height * imageAspect;
+      offsetY = 0;
+      offsetX = (size.width - drawWidth) / 2;
+    }
+
     canvas.drawImageRect(
       imageFile,
-      Rect.fromLTWH(0, 0, imageFile.width.toDouble(), imageFile.height.toDouble()),
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      paint,
+      Rect.fromLTWH(
+          0, 0, imageFile.width.toDouble(), imageFile.height.toDouble()),
+      Rect.fromLTWH(offsetX, offsetY, drawWidth, drawHeight),
+      Paint()
+        ..filterQuality = FilterQuality.high, // Ensure high-quality scaling
     );
 
     // Dynamic stroke width calculation
     final double minStroke = 2.0;
     final double maxStroke = 10.0;
-    final double strokeWidth = ((size.width + size.height) / 200).clamp(minStroke, maxStroke);
+    final double strokeWidth =
+        ((size.width + size.height) / 200).clamp(minStroke, maxStroke);
 
     final boxPaint = Paint()
       ..color = Colors.green
@@ -53,7 +74,8 @@ class ObjectPainter extends CustomPainter {
       // Draw label text
       for (Label label in detectedObject.labels) {
         final textSpan = TextSpan(
-          text: "${label.text} (${(label.confidence * 100).toStringAsFixed(1)}%)",
+          text:
+              "${label.text} (${(label.confidence * 100).toStringAsFixed(1)}%)",
           style: TextStyle(
             fontSize: strokeWidth * 5.5,
             color: Colors.white,
@@ -68,7 +90,8 @@ class ObjectPainter extends CustomPainter {
         );
 
         textPainter.layout();
-        textPainter.paint(canvas, Offset(scaledRect.left, scaledRect.top - textPainter.height - 2));
+        textPainter.paint(canvas,
+            Offset(scaledRect.left, scaledRect.top - textPainter.height - 2));
         break;
       }
     }
@@ -94,6 +117,7 @@ class ObjectPainter extends CustomPainter {
   bool shouldRepaint(covariant ObjectPainter oldDelegate) {
     return oldDelegate.objectList != objectList ||
         oldDelegate.imageFile != imageFile ||
-        oldDelegate.editableBoundingBoxes != editableBoundingBoxes; // 👈 Check for changes
+        oldDelegate.editableBoundingBoxes !=
+            editableBoundingBoxes; // 👈 Check for changes
   }
 }
